@@ -1,0 +1,155 @@
+{% include "header.html"%}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <!-- add css -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <h1 align='center'>{{headername}}</h1>
+    <!-- headernameตัวแปร  -->
+    <h5 align="right">Hello {{ session ['fname'] }} {{ session ['lname'] }}</h5>
+    <h5 align="right"> <a href="/logout">Logout</a> </h5>
+    <table class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Username</th>
+          <th scope="col">Password</th>
+          <th scope="col">Userstatus</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in datas %}
+        <tr>
+          <td id='test{{row.0}}'>{{row.0}}</td>
+          <td>{{row.1}}</td>
+          <td>{{row.2}}</td>
+          <td>{{row.3}}</td>
+          <td>{{row.4}}</td>
+          <td>{{row.6}}</td>
+          <td>
+            <!-- ปุ่มกด แก้ไข กับ ลบ -->
+
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal{{row.0}}">Edit</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModaledit{{row.0}}">Delete</button>
+            <button type="submit" class="btn btn-success" onclick="Approve(param = 'test{{row.0}}')">Approve</button>
+
+            <div id="testreturn">
+            </div>
+          </td>
+        </tr>
+        <!-- Modal edit -->
+        <div class="modal fade" id="exampleModal{{row.0}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="{{ url_for('user.Edituser') }}" method="POST">
+                  <div class="form-group">
+                    <input type="hidden" class="form-control" value="{{row.0}}" name="id">
+                  </div>
+                  <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">User Fname:</label>
+                    <input type="text" class="form-control" value="{{row.1}}" name="userfname" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">User Lname:</label>
+                    <input type="text" class="form-control" value="{{row.2}}" name="userlname" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Username:</label>
+                    <input type="text" class="form-control" value="{{row.3}}" name="username" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Userpassword:</label>
+                    <input type="password" class="form-control" value="{{row.4}}" name="userpassword" required>
+                  </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal Delete-->
+        <div class="modal fade" id="exampleModaledit{{row.0}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Data?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form action="{{url_for('user.Delelteuser')}}" method="POST">
+                <div class="modal-body">
+                  <h2> You want to delete {{row.1}}? </h2>
+                  <input type="hidden" name="id" value="{{row.0}}">
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+  </div>
+  {% endfor %}
+  </tbody>
+  </table>
+
+  <a href="/showmember" class="btn btn-secondary">Back to showmember</a>
+
+
+</body>
+
+</html>
+{% include "footer.html"%}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  function Approve(param) {
+    paramId = document.getElementById(param).innerText;
+
+    $.ajax({
+      type: "POST",
+      url: "{{ url_for('user.testsss') }}",
+      contentType: 'application/json;charset=UTF-8',
+      data: {testttt : paramId},
+
+    }).done(function(response) {
+      $("#testreturn").text(response);
+
+    });
+  }
+</script>
+
+
+
+<!-- {% if testvalue == "test" %}
+<h1>คุณพิมพ์ test เข้ามา</h1>
+
+{% else %}
+<h1>คุณไม่ได้พิมพ์ test เข้ามา</h1>
+
+{% endif %} -->

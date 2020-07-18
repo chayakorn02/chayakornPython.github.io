@@ -1,0 +1,229 @@
+{% include "header.html"%}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+<!-- add css -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <h1 align = 'center'>{{headername}}</h1>
+    <!-- headernameตัวแปร  -->
+    <h5 align="right">Hello {{ session ['fname'] }} {{ session ['lname'] }}</h5>
+    <h5 align="right"> <a href="/logout">Logout</a> </h5>
+<!-- เลือกข้อมูลจากวันเกิด -->
+    <form action="{{ url_for('member.Showwithdate') }}" method='POST'>
+      <div class="form-row align-items-center">
+        <div class="col">
+          <input type="date" class="form-control" name='dtstart' required>
+        </div>
+
+      <div class="col">
+        <input type="date" class="form-control" name="dtend" required>
+      </div>
+
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Show info</button>
+      </div>
+      <div class="col-auto">
+        <a href="/showmember" class="btn btn-success">Show all</a>
+      </div>
+      </div>
+    </form>
+
+<br>
+<form action="{{ url_for('member.Showsearch') }}" method='POST'>
+  <div class="form-row align-items-center">
+    <div class="col">
+      <input type="text" class="form-control" name='searchname' placeholder="Inputname" required>
+    </div>
+
+  <div class="col-auto">
+    <button type="submit" class="btn btn-primary">Searchname</button>
+  </div>
+  </div>
+</form>
+<br>
+<!-- เลือกข้อมูลจากเพศ -->
+<!-- <form action="{{ url_for('member.Showwithsex') }}" method='POST'>
+  <div class="input-group">
+  <select class="custom-select" id="inputGroupSelect04" name = "sex">
+    <option value="male" name="sex">Male</option>
+    <option value="female" name="sex">Femle</option>
+  </select>
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="submit">Find</button>
+</div>
+</div>
+</form> -->
+  <form action="{{ url_for('member.Report') }}" method='POST'>
+        <div class="input-group">
+          <label for="recipient-name" class="col-form-label"></label>
+          <select class="custom-select" id="inputGroupSelect02" name="sex">
+            <option value="Male" name="sex" selected>Male</option>
+            <option value="Female" name="sex">Female</option>
+          </select>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Show Report</button>
+        </div>
+        </div>
+
+
+
+
+  </form>
+<br>
+    <table class="table table-dark">
+      <thead>
+        {{ pagination.links }}
+        {{ pagination.info }}
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Sex</th>
+          <th scope="col">Birthdate</th>
+          <th scope="col">Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+  <tbody>
+    {% for row in users %}
+    <tr>
+      <td>{{ datas[row].0 }}</td>
+      <td>{{ datas[row].1 }}</td>
+      <td>{{ datas[row].2 }}</td>
+      <td>{{ datas[row].3 }}</td>
+      <td>{{ datas[row].4 }}</td>
+      <td>{{ datas[row].5 }}</td>
+      <td>
+        <!-- ปุ่มกด แก้ไข กับ ลบ -->
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal{{datas[row].0}}">Edit</button>
+        <button type="button" class="btn btn-danger"data-toggle="modal" data-target="#exampleModaledit{{datas[row].0}}">Delete</button>
+      </td>
+    </tr>
+    <!-- Modal edit&update -->
+    <div class="modal fade" id="exampleModal{{ datas[row].0 }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Data</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ url_for('member.Editmember') }}" method="POST" enctype="multipart/form-data" >
+          <div class="form-group">
+            <input type="hidden" class="form-control" value="{{ datas[row].0 }}" name="id">
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" value="{{ datas[row].1 }}" name="fname" required>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Last Name:</label>
+            <input type="text" class="form-control" value="{{ datas[row].2 }}" name="lname" required>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Sex:</label>
+            <select class="custom-select" id="inputGroupSelect02" name="sex">
+              {% if row.3 == "Male" %}
+              <option value="Male" name="sex" selected>Male</option>
+              <option value="Female" name="sex">Female</option>
+              {% else %}
+              <option value="Male" name="sex">Male</option>
+              <option value="Female" name="sex" selected>Female</option>
+              {% endif %}
+            </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Birthdate:</label>
+            <input type="date" class="form-control" value="{{ datas[row].4 }}" name="bdate" required>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Email:</label>
+            <input type="email" class="form-control" value="{{ datas[row].5 }}" name="email" required>
+            <!-- แก้ไขเพิ่มรูปแล้วไม่แสดงตัวอย่าง -->
+          </div>
+          <div class="form-group">
+            <input type="file" name="files" accept="image/x-png,image/gif,image/jpeg" onchange="readURL(this,{{datas[row].0}})">
+            <img id="blah{{ datas[row].0 }}" src="{{ datas[row].7 }}" alt="" class="img-thumbnail"/>
+            <!-- แก้ไขเพิ่มรูปแล้วไม่แสดงตัวอย่าง -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Delete-->
+  <div class="modal fade" id="exampleModaledit{{ datas[row].0 }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete Data?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{url_for('member.Deleltemember')}}" method="POST">
+        <div class="modal-body">
+          <h2> You want to delete {{row.1}}? </h2>
+          <input type="hidden" name="id" value="{{ datas[row].0 }}">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="/adddatamember" class="btn btn-success">Add Data</a>
+<a href="/showuser" class="btn btn-secondary">Add Status User</a>
+<!-- แก้ไขเพิ่มรูปแล้วไม่แสดงตัวอย่าง -->
+<script>
+      function readURL(input,inputid) {
+        console.log(input)
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+           $('#blah'+ inputid)
+              .attr('src', e.target.result)
+          };
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+</script>
+<!-- แก้ไขเพิ่มรูปแล้วไม่แสดงตัวอย่าง -->
+</body>
+</html>
+{% include "footer.html"%}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+
+
+<!-- {% if testvalue == "test" %}
+<h1>คุณพิมพ์ test เข้ามา</h1>
+
+{% else %}
+<h1>คุณไม่ได้พิมพ์ test เข้ามา</h1>
+
+{% endif %} -->
